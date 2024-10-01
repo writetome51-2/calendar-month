@@ -1,11 +1,31 @@
+// Framework-agnostic html element attribute directive.
+// To use, create a subclass for use in the specific framework you want.
+// Example (for use in Angular):
+/******
+@Directive({selector: 'appOnInitTakeFocus'})
+export class AppOnInitTakeFocusDirective extends OnInitTakeFocusDirective
+ implements OnInit, OnDestroy {
+   @Input() delayReturningFocus;
+
+   constructor(elRef: ElementRef){
+      super(elRef.nativeElement);
+   }
+
+   ngOnInit(){
+      this.onInit();
+   }
+
+   ngOnDestroy(){
+      this.onDestroy(this.delayReturningFocus);
+   }
+}
+******/
+
 export class OnInitTakeFocusDirective {
    //
    private __returnFocusOnDestroy = true;
    private __previouslyFocusedElementId: string;
    private readonly __temporaryId: string = "app-temporary-id-" + Math.random();
-
-   // input
-   delayReturningFocus = 0; // ms
 
    constructor(private __host: HTMLElement) {}
 
@@ -20,7 +40,9 @@ export class OnInitTakeFocusDirective {
       this.__host.focus();
    }
 
-   onDestroy() {
+   onDestroy(
+      delayReturningFocus = 0 // ms
+   ) {
       setTimeout(() => {
          const previouslyFocusedElement = document.getElementById(
             this.__previouslyFocusedElementId
@@ -33,6 +55,6 @@ export class OnInitTakeFocusDirective {
                previouslyFocusedElement.removeAttribute("id");
             }
          }
-      }, this.delayReturningFocus);
+      }, delayReturningFocus);
    }
 }
