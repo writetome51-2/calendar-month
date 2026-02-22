@@ -1,11 +1,10 @@
-import {GetWeeks} from './get-weeks';
-import {getTodaysDate} from './get-todays-date';
-import {inRange} from '@writetome51/in-range';
-import {not} from '@writetome51/not';
-import {getRoundedDown} from '@writetome51/get-rounded-up-down'
+import { GetWeeks } from "./get-weeks";
+import { getTodaysDate } from "./get-todays-date";
+import { inRange } from "@writetome51/in-range";
+import { not } from "@writetome51/not";
+import { getRoundedDown } from "@writetome51/get-rounded-up-down";
 
 export type CalendarMonthSettings = {
-
    /*****
     Defaults to most recent setting, or if never set, current year
     *****/
@@ -22,7 +21,7 @@ export type CalendarMonthSettings = {
     1 - 7.  Defaults to most recent setting, or if never set, 1 (Sunday)
     *****/
    weekBeginsOn?: number;
-}
+};
 
 export type CalendarMonthData = Required<CalendarMonthSettings> & {
    /*****
@@ -37,39 +36,35 @@ export type CalendarMonthData = Required<CalendarMonthSettings> & {
     [26,27,28,1,2,3,4]
     ]
     *****/
-   weeks: number[][];
-}
+   weeks: ReadonlyArray<ReadonlyArray<number>>;
+};
 
 export class CalendarMonth {
-
    private __data: CalendarMonthData = {
       year: undefined,
       month: undefined,
       weekBeginsOn: undefined,
-      weeks: undefined
+      weeks: undefined,
    };
 
    get data(): CalendarMonthData {
-      return Object.freeze({...this.__data});
+      return Object.freeze({ ...this.__data });
    }
 
    constructor(settings?: CalendarMonthSettings) {
       this.set(settings);
    }
 
-
    set(settings: CalendarMonthSettings = {}): void {
-      const {year, month, weekBeginsOn} = settings;
+      const { year, month, weekBeginsOn } = settings;
       const today = getTodaysDate();
 
       this.__data.year = year || this.__data.year || today.year;
-      this.__data.month = Number.isInteger(month) ?
-         month :
-         this.__data.month || today.month;
+      this.__data.month = Number.isInteger(month) ? month : this.__data.month || today.month;
 
-      this.__data.weekBeginsOn = Number.isInteger(weekBeginsOn) ?
-         weekBeginsOn :
-         this.__data.weekBeginsOn || 1;
+      this.__data.weekBeginsOn = Number.isInteger(weekBeginsOn)
+         ? weekBeginsOn
+         : this.__data.weekBeginsOn || 1;
 
       if (not(inRange([1, 7], this.__data.weekBeginsOn))) {
          throw new Error(`'weekBeginsOn' must be integer from 1 to 7`);
@@ -77,14 +72,13 @@ export class CalendarMonth {
 
       if (not(inRange([1, 12], this.__data.month))) {
          // adjust month and year
-         let numYears = getRoundedDown(this.__data.month / 12);
-         if (numYears === 0) numYears = -1;
-         const monthReference = (numYears < 0) ? 12 : 0;
+         let numYearsToAdd = getRoundedDown(this.__data.month / 12);
+         if (numYearsToAdd === 0) numYearsToAdd = -1;
+         const monthReference = numYearsToAdd < 0 ? 12 : 0;
          this.__data.month = monthReference + (this.__data.month % 12);
-         this.__data.year += numYears;
+         this.__data.year += numYearsToAdd;
       }
 
       this.__data.weeks = GetWeeks.go(this.__data);
    }
-
 }

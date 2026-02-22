@@ -30,7 +30,7 @@ export type CalendarMonthData = Required<CalendarMonthSettings> & {
        [26,27,28,1,2,3,4]
      ]
      *****/
-    weeks: number[][];
+     weeks: ReadonlyArray<ReadonlyArray<number>>;
 };
 
 export declare class CalendarMonth {
