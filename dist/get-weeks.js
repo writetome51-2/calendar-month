@@ -1,4 +1,3 @@
-import { GetNumDaysInMonth } from "./get-num-days-in-month.js";
 import { getRoundedUp } from "@writetome51/get-rounded-up-down";
 import { getArrFilled } from "@writetome51/get-arr-filled";
 import { getPage } from "@writetome51/array-get-page";
@@ -13,7 +12,7 @@ export class GetWeeks {
         return this.__getDaysSeparatedAsWeeks(Object.assign(Object.assign({}, vars), { daysToDisplay }));
     }
     static __getVariables(settings) {
-        const numDaysInMonth = GetNumDaysInMonth.go(settings);
+        const numDaysInMonth = this.__getNumDaysInMonth(settings);
         const weekdayIndexOfFirstDay = this.__getWeekdayIndexOfFirstDay(settings);
         return Object.assign(Object.assign({}, settings), { weekdayIndexOfFirstDay,
             numDaysInMonth, numWeeks: getRoundedUp((numDaysInMonth + weekdayIndexOfFirstDay) / 7) });
@@ -25,10 +24,7 @@ export class GetWeeks {
         return index;
     }
     static __getDaysOfPreviousMonth({ month, year, weekdayIndexOfFirstDay }) {
-        const numDaysInPreviousMonth = GetNumDaysInMonth.go({
-            month: month - 1,
-            year,
-        });
+        const numDaysInPreviousMonth = this.__getNumDaysInMonth({ year, month: month - 1 });
         return getArrFilled(weekdayIndexOfFirstDay, (i) => numDaysInPreviousMonth - (weekdayIndexOfFirstDay - 1) + i);
     }
     static __getDaysOfNextMonth({ numWeeks, weekdayIndexOfFirstDay, numDaysInMonth }) {
@@ -40,5 +36,10 @@ export class GetWeeks {
     }
     static __getDaysSeparatedAsWeeks({ daysToDisplay, numWeeks, }) {
         return Object.freeze(getArrFilled(numWeeks, (i) => Object.freeze(getPage(i + 1, 7, daysToDisplay))));
+    }
+    // given month (1-based).
+    static __getNumDaysInMonth({ year, month }) {
+        // Day 0 of the next month is the last day of the current month
+        return new Date(year, month, 0).getDate();
     }
 }

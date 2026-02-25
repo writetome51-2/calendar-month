@@ -1,8 +1,7 @@
-import { GetNumDaysInMonth } from "./get-num-days-in-month";
 import { getRoundedUp } from "@writetome51/get-rounded-up-down";
 import { getArrFilled } from "@writetome51/get-arr-filled";
 import { getPage } from "@writetome51/array-get-page";
-import { CalendarMonthSettings } from "../index";
+import { CalendarMonthSettings } from "./index";
 
 export class GetWeeks {
    static go(settings: Required<CalendarMonthSettings>): ReadonlyArray<ReadonlyArray<number>> {
@@ -20,7 +19,7 @@ export class GetWeeks {
    private static __getVariables(
       settings: Required<CalendarMonthSettings>
    ): { month; year; weekBeginsOn; weekdayIndexOfFirstDay; numDaysInMonth; numWeeks } {
-      const numDaysInMonth = GetNumDaysInMonth.go(settings);
+      const numDaysInMonth = this.__getNumDaysInMonth(settings);
       const weekdayIndexOfFirstDay = this.__getWeekdayIndexOfFirstDay(settings);
 
       return {
@@ -39,10 +38,7 @@ export class GetWeeks {
    }
 
    private static __getDaysOfPreviousMonth({ month, year, weekdayIndexOfFirstDay }) {
-      const numDaysInPreviousMonth = GetNumDaysInMonth.go({
-         month: month - 1,
-         year,
-      });
+      const numDaysInPreviousMonth = this.__getNumDaysInMonth({ year, month: month - 1 });
       return getArrFilled(
          weekdayIndexOfFirstDay,
          (i) => numDaysInPreviousMonth - (weekdayIndexOfFirstDay - 1) + i
@@ -68,5 +64,11 @@ export class GetWeeks {
             (i) => Object.freeze(getPage(i + 1, 7, daysToDisplay)) as ReadonlyArray<number>
          )
       );
+   }
+
+   // given month (1-based).
+   private static __getNumDaysInMonth({ year, month }): number {
+      // Day 0 of the next month is the last day of the current month
+      return new Date(year, month, 0).getDate();
    }
 }
