@@ -37,7 +37,7 @@ export class GetWeeks {
     static __getDaysSeparatedAsWeeks({ daysToDisplay, numWeeks, }) {
         return Object.freeze(getArrFilled(numWeeks, (i) => Object.freeze(getPage(i + 1, 7, daysToDisplay))));
     }
-    // given month (1-based).
+    // given month (January is 1).
     static __getNumDaysInMonth({ year, month }) {
         // Day 0 of the next month is the last day of the current month
         return new Date(year, month, 0).getDate();

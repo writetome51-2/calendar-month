@@ -2,7 +2,6 @@ import { GetWeeks } from "./get-weeks";
 import { getTodaysDate } from "./get-todays-date";
 import { inRange } from "@writetome51/in-range";
 import { not } from "@writetome51/not";
-import { getRoundedDown } from "@writetome51/get-rounded-up-down";
 
 export type CalendarMonthSettings = {
    /*****
@@ -18,6 +17,13 @@ export type CalendarMonthSettings = {
    month?: number;
 
    /*****
+    Defaults to most recent setting, or if never set, 1.
+    If month or year is changed, day is reset to 1.
+    If day is outside accepted range, month and/or year are adjusted.
+    *****/
+   day?: number;
+
+   /*****
     1 - 7.  Defaults to most recent setting, or if never set, 1 (Sunday)
     *****/
    weekBeginsOn?: number;
@@ -28,6 +34,7 @@ export type CalendarMonthData = Required<CalendarMonthSettings> & {
     * The numbers of each day in the set month, separated into the weeks of the month.
     * Includes days of previous and next months. I.E., This is a February whose first
     * day is a Wednesday (and the week begins on Sunday):
+    *
     [
     [29,30,31,1,2,3,4],
     [5,6,7,8,9,10,11],
@@ -43,6 +50,7 @@ export class CalendarMonth {
    private __data: CalendarMonthData = {
       year: undefined,
       month: undefined,
+      day: undefined,
       weekBeginsOn: undefined,
       weeks: undefined,
    };
@@ -56,11 +64,35 @@ export class CalendarMonth {
    }
 
    set(settings: CalendarMonthSettings = {}): void {
-      const { year, month, weekBeginsOn } = settings;
+      const { year, month, day, weekBeginsOn } = settings;
       const today = getTodaysDate();
+      const [yearIsInt, monthIsInt, dayIsInt]: [boolean, boolean, boolean] = [
+         Number.isInteger(year),
+         Number.isInteger(month),
+         Number.isInteger(day),
+      ];
 
-      this.__data.year = year || this.__data.year || today.year;
-      this.__data.month = Number.isInteger(month) ? month : this.__data.month || today.month;
+      this.__data.day = dayIsInt ? day : this.__data.day;
+      if (!this.__data.day || yearIsInt || monthIsInt) {
+         this.__data.day = 1;
+      }
+
+      this.__data.year = yearIsInt
+         ? year
+         : Number.isInteger(this.__data.year)
+         ? this.__data.year
+         : today.year;
+      this.__data.month = monthIsInt
+         ? month
+         : Number.isInteger(this.__data.month)
+         ? this.__data.month
+         : today.month;
+
+      // If any values overflow, adjustments are made here
+      const date = new Date(this.__data.year, this.__data.month - 1, this.__data.day);
+      this.__data.year = date.getFullYear();
+      this.__data.month = date.getMonth() + 1;
+      this.__data.day = date.getDate();
 
       this.__data.weekBeginsOn = Number.isInteger(weekBeginsOn)
          ? weekBeginsOn
@@ -68,15 +100,6 @@ export class CalendarMonth {
 
       if (not(inRange([1, 7], this.__data.weekBeginsOn))) {
          throw new Error(`'weekBeginsOn' must be integer from 1 to 7`);
-      }
-
-      if (not(inRange([1, 12], this.__data.month))) {
-         // adjust month and year
-         let numYearsToAdd = getRoundedDown(this.__data.month / 12);
-         if (numYearsToAdd === 0) numYearsToAdd = -1;
-         const monthReference = numYearsToAdd < 0 ? 12 : 0;
-         this.__data.month = monthReference + (this.__data.month % 12);
-         this.__data.year += numYearsToAdd;
       }
 
       this.__data.weeks = GetWeeks.go(this.__data);

@@ -66,7 +66,7 @@ export class GetWeeks {
       );
    }
 
-   // given month (1-based).
+   // given month (January is 1).
    private static __getNumDaysInMonth({ year, month }): number {
       // Day 0 of the next month is the last day of the current month
       return new Date(year, month, 0).getDate();
