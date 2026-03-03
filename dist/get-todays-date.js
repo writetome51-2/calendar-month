@@ -3,6 +3,6 @@ export const getTodaysDate = () => {
     return {
         year: today.getFullYear(),
         month: today.getMonth() + 1,
-        day: today.getDate()
+        day: today.getDate(),
     };
 };

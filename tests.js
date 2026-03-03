@@ -9,7 +9,7 @@ let cm = new CalendarMonth();
 if (
    cm.data.month === todaysDate.month &&
    cm.data.year === todaysDate.year &&
-   cm.data.day === 1 &&
+   cm.data.day === todaysDate.day &&
    cm.data.weekBeginsOn === 1
 ) {
    console.log(`test 1 passed`);
@@ -322,35 +322,40 @@ if (
    console.log(`test 10A passed`);
 else console.log(`test 10A FAILED`);
 
-// If year is provided, day must be set to 1, ignoring passed value:
 cm.set({ year: 2020, day: 2 });
-if (cm.data.year === 2020 && cm.data.day === 1) console.log(`test 11 passed`);
+if (cm.data.year === 2020 && cm.data.month === 2 && cm.data.day === 2)
+   console.log(`test 11 passed`);
 else console.log(`test 11 FAILED`);
 
 cm.set({ year: 2020, day: 17 });
-if (cm.data.year === 2020 && cm.data.day === 1) console.log(`test 11A passed`);
+if (cm.data.year === 2020 && cm.data.month === 2 && cm.data.day === 17)
+   console.log(`test 11A passed`);
 else console.log(`test 11A FAILED`);
 
 cm.set({ year: 2020, day: 32 });
-if (cm.data.year === 2020 && cm.data.day === 1) console.log(`test 11B passed`);
+if (cm.data.year === 2020 && cm.data.month === 3 && cm.data.day === 3)
+   console.log(`test 11B passed`);
 else console.log(`test 11B FAILED`);
 
-// If month is provided, day must be set to 1, ignoring passed value:
+cm.set({ day: 32 });
+if (cm.data.year === 2020 && cm.data.month === 4 && cm.data.day === 1)
+   console.log(`test 11B passed`);
+else console.log(`test 11B FAILED`);
+
 cm.set({ month: 3, day: 2 });
-if (cm.data.month === 3 && cm.data.day === 1) console.log(`test 11 passed`);
+if (cm.data.month === 3 && cm.data.day === 2) console.log(`test 11 passed`);
 else console.log(`test 11 FAILED`);
 
 cm.set({ month: 3, day: 17 });
-if (cm.data.month === 3 && cm.data.day === 1) console.log(`test 11A passed`);
+if (cm.data.month === 3 && cm.data.day === 17) console.log(`test 11A passed`);
 else console.log(`test 11A FAILED`);
 
 cm.set({ month: 3, day: 32 });
-if (cm.data.month === 3 && cm.data.day === 1) console.log(`test 11B passed`);
+if (cm.data.month === 4 && cm.data.day === 1) console.log(`test 11B passed`);
 else console.log(`test 11B FAILED`);
 
-cm = new CalendarMonth({ day: 32 });
-if (cm.data.year === 2026 && cm.data.month === 4 && cm.data.day === 1)
-   console.log(`test 11B passed`);
+cm.set({ day: cm.data.day - 1 });
+if (cm.data.month === 3 && cm.data.day === 31) console.log(`test 11B passed`);
 else console.log(`test 11B FAILED`);
 
 // Make sure 'weeks' is readonly:

@@ -17,8 +17,8 @@ export type CalendarMonthSettings = {
    month?: number;
 
    /*****
-    Defaults to most recent setting, or if never set, 1.
-    If month or year is changed, day is reset to 1.
+    Defaults to most recent setting. If never set, and both month and year are set to
+    current month and year, this is set to current day. Else is set to 1.
     If day is outside accepted range, month and/or year are adjusted.
     *****/
    day?: number;
@@ -36,11 +36,11 @@ export type CalendarMonthData = Required<CalendarMonthSettings> & {
     * day is a Wednesday (and the week begins on Sunday):
     *
     [
-    [29,30,31,1,2,3,4],
-    [5,6,7,8,9,10,11],
-    [12,13,14,15,16,17,18],
-    [19,20,21,22,23,24,25],
-    [26,27,28,1,2,3,4]
+      [29,30,31,1,2,3,4],
+      [5,6,7,8,9,10,11],
+      [12,13,14,15,16,17,18],
+      [19,20,21,22,23,24,25],
+      [26,27,28,1,2,3,4]
     ]
     *****/
    weeks: ReadonlyArray<ReadonlyArray<number>>;
@@ -65,28 +65,30 @@ export class CalendarMonth {
 
    set(settings: CalendarMonthSettings = {}): void {
       const { year, month, day, weekBeginsOn } = settings;
+      const previous = {
+         month: this.__data.month,
+         year: this.__data.year,
+         weekBeginsOn: this.__data.weekBeginsOn,
+      };
       const today = getTodaysDate();
-      const [yearIsInt, monthIsInt, dayIsInt]: [boolean, boolean, boolean] = [
-         Number.isInteger(year),
-         Number.isInteger(month),
-         Number.isInteger(day),
-      ];
 
-      this.__data.day = dayIsInt ? day : this.__data.day;
-      if (!this.__data.day || yearIsInt || monthIsInt) {
-         this.__data.day = 1;
-      }
-
-      this.__data.year = yearIsInt
+      this.__data.year = Number.isInteger(year)
          ? year
          : Number.isInteger(this.__data.year)
          ? this.__data.year
          : today.year;
-      this.__data.month = monthIsInt
+      this.__data.month = Number.isInteger(month)
          ? month
          : Number.isInteger(this.__data.month)
          ? this.__data.month
          : today.month;
+      this.__data.day = Number.isInteger(day)
+         ? day
+         : Number.isInteger(this.__data.day)
+         ? this.__data.day
+         : this.__data.month === today.month && this.__data.year === today.year
+         ? today.day
+         : 1;
 
       // If any values overflow, adjustments are made here
       const date = new Date(this.__data.year, this.__data.month - 1, this.__data.day);
@@ -102,6 +104,12 @@ export class CalendarMonth {
          throw new Error(`'weekBeginsOn' must be integer from 1 to 7`);
       }
 
-      this.__data.weeks = GetWeeks.go(this.__data);
+      if (
+         this.__data.year !== previous.year ||
+         this.__data.month !== previous.month ||
+         this.__data.weekBeginsOn !== previous.weekBeginsOn
+      ) {
+         this.__data.weeks = GetWeeks.go(this.__data);
+      }
    }
 }
