@@ -70,6 +70,7 @@ export class CalendarMonth {
          month: this.__data.month,
          year: this.__data.year,
          weekBeginsOn: this.__data.weekBeginsOn,
+         // `day` is excluded intentionally.
       };
       const today = getTodaysDate();
 
@@ -102,6 +103,8 @@ export class CalendarMonth {
          this.__data.year !== previousSetting.year ||
          this.__data.month !== previousSetting.month ||
          this.__data.weekBeginsOn !== previousSetting.weekBeginsOn
+         // We don't check if `day` changed because a change to `day` alone doesn't trigger
+         // weeks recalculation.
       ) {
          this.__data.weeks = GetWeeks.go(this.__data);
       }
