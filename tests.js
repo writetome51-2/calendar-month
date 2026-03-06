@@ -9,7 +9,7 @@ let cm = new CalendarMonth();
 if (
    cm.data.month === todaysDate.month &&
    cm.data.year === todaysDate.year &&
-   cm.data.day === todaysDate.day &&
+   cm.data.day === 1 &&
    cm.data.weekBeginsOn === 1
 ) {
    console.log(`test 1 passed`);
@@ -20,6 +20,7 @@ cm = new CalendarMonth({});
 if (
    cm.data.month === todaysDate.month &&
    cm.data.year === todaysDate.year &&
+   cm.data.day === 1 &&
    cm.data.weekBeginsOn === 1
 ) {
    console.log(`test 2 passed`);
@@ -30,6 +31,7 @@ cm.set();
 if (
    cm.data.month === todaysDate.month &&
    cm.data.year === todaysDate.year &&
+   cm.data.day === 1 &&
    cm.data.weekBeginsOn === 1
 ) {
    console.log(`test 3 passed`);
@@ -40,57 +42,44 @@ cm.set({});
 if (
    cm.data.month === todaysDate.month &&
    cm.data.year === todaysDate.year &&
+   cm.data.day === 1 &&
    cm.data.weekBeginsOn === 1
 ) {
    console.log(`test 4 passed`);
 } else console.log(`test 4 FAILED`);
 
-// test 5: instantiation with parameters should set .data to expected values:
-cm = new CalendarMonth({
-   month: 1,
-   year: 2020,
-   weekBeginsOn: 2,
-});
-if (cm.data.month === 1 && cm.data.year === 2020 && cm.data.weekBeginsOn === 2) {
+// test 5: instantiation with year that isn't current should set month to 1, day to 1, and weekBeginsOn to 1:
+cm = new CalendarMonth({ year: 2020 });
+if (
+   cm.data.year === 2020 &&
+   cm.data.month === 1 &&
+   cm.data.day === 1 &&
+   cm.data.weekBeginsOn === 1
+) {
    console.log(`test 5 passed`);
 } else console.log(`test 5 FAILED`);
 
 // test 6: instantiation with some, but not all parameters, should set .data to expected values:
-cm = new CalendarMonth({
-   month: 1,
-});
+cm = new CalendarMonth({ month: 2 });
 if (
-   cm.data.month === 1 &&
+   cm.data.month === 2 &&
    // year should be set to default (the current year)
    cm.data.year === todaysDate.year &&
+   cm.data.day === 1 &&
    // weekBeginsOn should be set to default (1, Sunday)
    cm.data.weekBeginsOn === 1
 ) {
    console.log(`test 6 passed`);
 } else console.log(`test 6 FAILED`);
 
-cm = new CalendarMonth({
-   year: 2020,
-});
-
-// month should be set to default (the current month)
-if (
-   cm.data.month === todaysDate.month &&
-   cm.data.year === 2020 &&
-   // weekBeginsOn should be set to default (1, Sunday)
-   cm.data.weekBeginsOn === 1
-) {
-   console.log(`test 6A passed`);
-} else console.log(`test 6A FAILED`);
-cm = new CalendarMonth({
-   weekBeginsOn: 6,
-});
+cm = new CalendarMonth({ weekBeginsOn: 6 });
 
 // month should be set to default (the current month)
 if (
    cm.data.month === todaysDate.month &&
    // year should be set to default (the current year)
    cm.data.year === todaysDate.year &&
+   cm.data.day === 1 &&
    cm.data.weekBeginsOn === 6
 ) {
    console.log(`test 6B passed`);
@@ -116,8 +105,13 @@ if (cm.data.month === 1 && cm.data.year === 1000 && cm.data.weekBeginsOn === 1) 
    console.log(`test 7B passed`);
 } else console.log(`test 7B FAILED`);
 
-cm.set({ year: 2000, month: 2, weekBeginsOn: 2 });
-if (cm.data.month === 2 && cm.data.year === 2000 && cm.data.weekBeginsOn === 2) {
+cm.set({ year: 2000, month: 2, day: 5, weekBeginsOn: 2 });
+if (
+   cm.data.month === 2 &&
+   cm.data.year === 2000 &&
+   cm.data.day === 5 &&
+   cm.data.weekBeginsOn === 2
+) {
    console.log(`test 7C passed`);
 } else console.log(`test 7C FAILED`);
 
@@ -358,5 +352,21 @@ cm.set({ day: cm.data.day - 1 });
 if (cm.data.month === 3 && cm.data.day === 31) console.log(`test 11B passed`);
 else console.log(`test 11B FAILED`);
 
+cm = new CalendarMonth({ year: 2023, month: 1 });
+console.log(cm.data);
+
+cm.set({ day: cm.data.day + 60 });
+console.log(cm.data);
+
+cm.set({ month: 8, year: 2023 });
+console.log(cm.data);
+
+// Make sure 'year' is readonly:
+// cm.data.year = 5;
+
 // Make sure 'weeks' is readonly:
-cm.data.weeks[0] = [];
+// cm.data.weeks[0] = [];
+
+cm = new CalendarMonth();
+const current = new Date();
+console.log(cm.data.year === current.getFullYear() && cm.data.month === current.getMonth() + 1);
