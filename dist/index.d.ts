@@ -1,31 +1,31 @@
 export type CalendarMonthSettings = {
-    /*****
+   /*****
      Defaults to most recent setting, or if never set, current year
      *****/
-    year?: number;
+   year?: number;
 
-    /*****
-     1 - 12. Defaults to most recent setting, or if never set, current month.
+   /*****
+     1 - 12. Defaults to most recent setting. If never set, and year is set to current
+     year, is set to current month. Else, 1.
      If month is not within 1 - 12, month and year will be adjusted. I.E., if set to 0,
      month will be reset to 12 and year will be reset to previous year.
      *****/
-    month?: number;
+   month?: number;
 
-    /*****
-     Defaults to most recent setting. If never set, and both month and year are set to
-     current month and year, this is set to current day. Else is set to 1.
+   /*****
+     Defaults to most recent setting, or if never set, 1.
      If day is outside accepted range, month and/or year are adjusted.
      *****/
-    day?: number;
+   day?: number;
 
-    /*****
+   /*****
      1 - 7.  Defaults to most recent setting, or if never set, 1 (Sunday)
      *****/
-    weekBeginsOn?: number;
+   weekBeginsOn?: number;
 };
 
 export type CalendarMonthData = Required<CalendarMonthSettings> & {
-    /*****
+   /*****
      * The numbers of each day in the set month, separated into the weeks of the month.
      * Includes days of previous and next months. I.E., This is a February whose first
      * day is a Wednesday (and the week begins on Sunday):
@@ -38,15 +38,15 @@ export type CalendarMonthData = Required<CalendarMonthSettings> & {
        [26,27,28,1,2,3,4]
      ]
      *****/
-    weeks: ReadonlyArray<ReadonlyArray<number>>;
+   weeks: ReadonlyArray<ReadonlyArray<number>>;
 };
 
 export declare class CalendarMonth {
-    private __data;
+   private __data;
 
-    get data(): CalendarMonthData;
+   get data(): CalendarMonthData;
 
-    constructor(settings?: CalendarMonthSettings);
+   constructor(settings?: CalendarMonthSettings);
 
-    set(settings?: CalendarMonthSettings): void;
+   set(settings?: CalendarMonthSettings): void;
 }
