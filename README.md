@@ -1,6 +1,6 @@
 # CalendarMonth
 
-A Typescript class for generating data representing a calendar month
+A Typescript class for generating data representing a calendar month, especially for display
 
 ## API
 
