@@ -72,8 +72,7 @@ const current = new Date();
 console.log(cm.data.year === current.getFullYear() && cm.data.month === current.getMonth() + 1);
 // true
 
-// Instantiate with a specified month, letting it default to current year:
-cm = new CalendarMonth({ month: 1 });
+cm = new CalendarMonth({ month: 1, year: 2023 });
 console.log(cm.data);
 /*****
  {
@@ -110,14 +109,14 @@ console.log(cm.data);
  }
  *****/
 
-// Change to August 2023:
-cm.set({ month: 8, year: 2023 });
+// Change to August, and reset day to 1:
+cm.set({ month: 8, day: 1 });
 console.log(cm.data);
 /*****
  {
    year: 2023,
    month: 8,
-   day: 2,
+   day: 1,
    weekBeginsOn: 1,
    weeks: [
      [30, 31, 1, 2, 3, 4, 5],
@@ -149,6 +148,7 @@ console.log(cm.data);
  {
    year: 2023,
    month: 9,
+   day: 1,
    weekBeginsOn: 2,
    weeks: [
      [28, 29, 30, 31, 1, 2, 3],
@@ -167,6 +167,7 @@ console.log(cm.data);
  {
    year: 2024,
    month: 1,
+   day: 1,
    weekBeginsOn: 2,
    weeks: [
      [1, 2, 3, 4, 5, 6, 7],
