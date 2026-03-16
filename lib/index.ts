@@ -100,8 +100,8 @@ export class CalendarMonth {
       this.__data.day = date.getDate();
 
       if (
-         this.__data.year !== previousSetting.year ||
          this.__data.month !== previousSetting.month ||
+         this.__data.year !== previousSetting.year ||
          this.__data.weekBeginsOn !== previousSetting.weekBeginsOn
          // We don't check if `day` changed because a change to `day` alone doesn't trigger
          // weeks recalculation.
